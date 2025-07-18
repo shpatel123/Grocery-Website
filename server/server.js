@@ -15,12 +15,23 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 await connectCloudinary()
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ['http://localhost:5173', 'https://grocery-website-frontend-h5p9.onrender.com'];
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({ 
+  origin: allowedOrigins, 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+}));
+
+// Handle preflight requests
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 // Routes
 app.get('/', (req, res) => {
