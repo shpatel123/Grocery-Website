@@ -15,7 +15,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 await connectCloudinary()
-const allowedOrigins = ['http://localhost:5173', 'https://grocery-website-frontend-h5p9.onrender.com'];
+
+// Updated allowedOrigins to include your live frontend URL
+const allowedOrigins = [
+  'http://localhost:5173',  // For local development
+  'http://localhost:3000',  // Alternative local development port
+  'https://grocery-website-frontend-h5p9.onrender.com'  // Your live frontend URL
+];
 
 // Middleware
 app.use(express.json());
@@ -48,7 +54,8 @@ app.use('/api/order', orderRouter);
 // Start server after DB connects
 (async () => {
   await connectDB();
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on port ${port}`);
+    console.log(`CORS enabled for: ${allowedOrigins.join(', ')}`);
   });
 })();
