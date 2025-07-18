@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
 mongoose
-  .connect("mongodb://127.0.0.1:27017/greencart")
+  .connect("mongodb+srv://bhalalashubham1:<Sidog@29>@greencartcluster.7uv9qge.mongodb.net/")
   .then(() => {
     console.log("MongoDB connected successfully");
   })
