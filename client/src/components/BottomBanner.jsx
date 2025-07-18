@@ -14,7 +14,7 @@ const BottomBanner = () => {
         alt="banner"
         className="w-full md:hidden"
       />
-      <div className="absolute top-30 right-0 flex flex-col items-center md:items-end md:justify-center pt-16 md:pt-0 md:pr-24">
+    <div className="absolute top-10 md:top-[7.5rem] right-0 flex flex-col items-center md:items-end md:justify-center pt-16 md:pt-0 md:pr-24">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold text-primary mb-6">
             Why We Are the Best?
