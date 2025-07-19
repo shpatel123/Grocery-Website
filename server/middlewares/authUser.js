@@ -4,7 +4,7 @@ const authUser = async (req, res, next) => {
   const { token } = req.cookies;
 
   if (!token) {
-    return res.json({ success: false, message: "NOt Authorized" });
+    return res.json({ success: false, message: "Not Authorized - No Token" });
   }
 
   try {
@@ -12,11 +12,12 @@ const authUser = async (req, res, next) => {
     if (tokenDecode.id) {
        req.userId = tokenDecode.id;
     } else {
-      return res.json({ success: false, message: "NOt Authorized" });
+      return res.json({ success: false, message: "Not Authorized - Invalid Token" });
     }
     next();
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    console.log("Auth middleware error:", error.message);
+    return res.json({ success: false, message: "Not Authorized - Token Verification Failed" });
   }
 };
 
