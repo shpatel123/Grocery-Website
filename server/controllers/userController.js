@@ -7,11 +7,11 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res.json({ success: false, message: "Missing Detals" });
+      return res.json({ success: false, message: "Missing Details" });
     }
-    const exisitngUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (exisitngUser) {
+    if (existingUser) {
       return res.json({ success: false, message: "User already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,11 +21,13 @@ export const register = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+    
+    // Fixed cookie settings
     res.cookie("token", token, {
-      httpOnly: true, //prevent javascript to access cookie
-      secure: process.env.NODE_ENV === "production", //use secure cookie in production
-      sameSite: process.env.NODE_ENV === "prodcution" ? "node" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Fixed typo
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ success: true, user: { email: user.email, name: user.name } });
@@ -35,8 +37,7 @@ export const register = async (req, res) => {
   }
 };
 
-
-//login user: /pi/user/login
+//login user: /api/user/login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -51,24 +52,26 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.json({ success: false, message: "Invaild email or password" });
+      return res.json({ success: false, message: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.json({
         success: false,
-        message: "Email and password are required",
+        message: "Invalid email or password", // Fixed message
       });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+    
+    // Fixed cookie settings
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "prodcution" ? "node" : "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Fixed typo
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -82,7 +85,6 @@ export const login = async (req, res) => {
   }
 };
 
-
 //check Auth: /api/user/is-auth
 export const isAuth = async (req, res) => {
   try {
@@ -94,16 +96,16 @@ export const isAuth = async (req, res) => {
   }
 };
 
-
-//logot user: /api/user/logout
+//logout user: /api/user/logout
 export const logout = async (req, res) => {
   try {
+    // Fixed cookie settings
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "prodcution" ? "node" : "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Fixed typo
     });
-    return res.json({ success: true, message: "Logout" });
+    return res.json({ success: true, message: "Logout successful" });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
