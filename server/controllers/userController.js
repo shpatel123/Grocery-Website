@@ -21,29 +21,21 @@ export const register = async (req, res) => {
       expiresIn: "7d",
     });
     
-    // Production-ready cookie settings
-    const cookieOptions = {
+    // PRODUCTION COOKIE SETTINGS FOR CROSS-ORIGIN
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    };
-    
-    // Add domain for production if needed
-    if (process.env.NODE_ENV === "production" && process.env.COOKIE_DOMAIN) {
-      cookieOptions.domain = process.env.COOKIE_DOMAIN;
-    }
-    
-    res.cookie("token", token, cookieOptions);
-    console.log("User registered, token set in cookie");
+      secure: true, // Always true for HTTPS (Render uses HTTPS)
+      sameSite: "none", // Required for cross-origin cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
+    console.log("✅ User registered, cookie set");
     res.json({ 
       success: true, 
-      user: { email: user.email, name: user.name },
-      token // Also send token in response for debugging
+      user: { email: user.email, name: user.name }
     });
   } catch (error) {
-    console.log("Register error:", error.message);
+    console.log("❌ Register error:", error.message);
     res.json({ success: false, message: error.message });
   }
 };
@@ -76,29 +68,21 @@ export const login = async (req, res) => {
       expiresIn: "7d",
     });
     
-    // Production-ready cookie settings
-    const cookieOptions = {
+    // PRODUCTION COOKIE SETTINGS FOR CROSS-ORIGIN
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    };
-    
-    // Add domain for production if needed
-    if (process.env.NODE_ENV === "production" && process.env.COOKIE_DOMAIN) {
-      cookieOptions.domain = process.env.COOKIE_DOMAIN;
-    }
-    
-    res.cookie("token", token, cookieOptions);
-    console.log("User logged in, token set in cookie");
+      secure: true, // Always true for HTTPS (Render uses HTTPS)
+      sameSite: "none", // Required for cross-origin cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
+    console.log("✅ User logged in, cookie set");
     return res.json({
       success: true,
       user: { email: user.email, name: user.name },
-      token // Also send token in response for debugging
     });
   } catch (error) {
-    console.log("Login error:", error.message);
+    console.log("❌ Login error:", error.message);
     res.json({ success: false, message: error.message });
   }
 };
@@ -106,29 +90,25 @@ export const login = async (req, res) => {
 export const isAuth = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
+    console.log("✅ Auth check successful for user:", user.email);
     return res.json({ success: true, user });
   } catch (error) {
-    console.log("IsAuth error:", error.message);
+    console.log("❌ IsAuth error:", error.message);
     res.json({ success: false, message: error.message });
   }
 };
 
 export const logout = async (req, res) => {
   try {
-    const cookieOptions = {
+    res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    };
-    
-    if (process.env.NODE_ENV === "production" && process.env.COOKIE_DOMAIN) {
-      cookieOptions.domain = process.env.COOKIE_DOMAIN;
-    }
-    
-    res.clearCookie("token", cookieOptions);
+      secure: true,
+      sameSite: "none",
+    });
+    console.log("✅ User logged out, cookie cleared");
     return res.json({ success: true, message: "Logout successful" });
   } catch (error) {
-    console.log("Logout error:", error.message);
+    console.log("❌ Logout error:", error.message);
     res.json({ success: false, message: error.message });
   }
 };
