@@ -26,6 +26,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  console.log('Cookies:', req.cookies);
+  next();
+});
+
+
 // Basic route
 app.get('/', (req, res) => {
   res.json({ 
